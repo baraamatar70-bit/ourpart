@@ -5,15 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#b5c2bb" />
     <title>دعوة زفاف محمد نصوح وتقى</title>
-    <meta
-      name="description"
-      content="دعوة زفاف محمد نصوح وتقى — 1.9.2026 في صالة شوفال، ساحة المزرعة."
-    />
+    <meta name="description" content="دعوة زفاف محمد نصوح وتقى — 1.9.2026 في صالة شوفال، ساحة المزرعة." />
     <meta property="og:title" content="دعوة زفاف محمد نصوح وتقى" />
-    <meta
-      property="og:description"
-      content="يسعدنا حضوركم يوم 1.9.2026 الساعة 8 مساءً في صالة شوفال."
-    />
+    <meta property="og:description" content="يسعدنا حضوركم يوم 1.9.2026 الساعة 8 مساءً في صالة شوفال." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
     <link rel="preload" as="image" href="./assets/img/b0.webp" />
@@ -24,48 +18,60 @@
     <link rel="stylesheet" crossorigin href="./assets/index-mOQ4XaZe.css">
   </head>
   <body>
-<audio id="music" src="music.mp3" loop> </audio>
 
-<button onclick="startMusic()" id="btn" 
-  style="position:fixed; bottom:20px; right:20px; 
-         background:#ff4757; color:white; border:none; 
-         border-radius:50px; padding:12px 24px; cursor:pointer;">
-  🎵 تشغيل الموسيقى
-</button>
+    <!-- 🎵 الموسيقى: preload + autoplay + loop -->
+    <audio id="music" src="music.mp3" preload="auto" autoplay loop></audio>
 
-<script>
-  const music = document.getElementById('music');
+    <!-- زر التشغيل (يختفي بعد الضغط) -->
+    <button onclick="startMusic()" id="btn" 
+      style="position:fixed; bottom:20px; right:20px; z-index:9999;
+             background:#ff4757; color:white; border:none; 
+             border-radius:50px; padding:12px 24px; cursor:pointer; font-size:16px;">
+      🎵 تشغيل الموسيقى
+    </button>
 
-  function startMusic() {
-    music.play();
-    document.getElementById('btn').style.display = 'none';
-  }
+    <script>
+      const music = document.getElementById('music');
 
-  // إذا توقفت لأي سبب — شغلها فوراً
-  music.addEventListener('pause', function() {
-    music.play();
-  });
+      function startMusic() {
+        music.play();
+        document.getElementById('btn').style.display = 'none';
+      }
 
-  // إذا علقت بسبب النت — انتظر ثانية وشغلها
-  music.addEventListener('waiting', function() {
-    setTimeout(() => {
-      music.play();
-    }, 1000);
-  });
+      // 🔄 إذا توقفت لأي سبب — شغلها فوراً
+      music.addEventListener('pause', function() {
+        if (music.readyState >= 2) music.play();
+      });
 
-  // إذا انتهت — ارجع للبداية وشغلها
-  music.addEventListener('ended', function() {
-    music.currentTime = 0;
-    music.play();
-  });
+      // ⏳ إذا علقت بسبب النت — انتظر وشغلها
+      music.addEventListener('waiting', function() {
+        setTimeout(() => {
+          if (music.paused) music.play();
+        }, 500);
+      });
 
-  // فحص كل ثانية: متوقفة؟ شغلها!
-  setInterval(() => {
-    if (music.paused) {
-      music.play();
-    }
-  }, 1000);
-</script>
+      // 🔁 إذا انتهت — ارجع للبداية وشغلها
+      music.addEventListener('ended', function() {
+        music.currentTime = 0;
+        music.play();
+      });
+
+      // 🛡️ فحص كل نصف ثانية: متوقفة؟ شغلها!
+      setInterval(() => {
+        if (music.paused && music.readyState >= 2) {
+          music.play().catch(() => {});
+        }
+      }, 500);
+
+      // 🚀 محاولة تشغيل تلقائي عند تحميل الصفحة
+      window.addEventListener('load', function() {
+        music.play().catch(() => {
+          // إذا المتصفح منع autoplay، يظهر الزر
+          console.log('Autoplay blocked, waiting for user interaction');
+        });
+      });
+    </script>
+
     <div id="root"></div>
   </body>
 </html>
