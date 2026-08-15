@@ -68,11 +68,6 @@
       background: #ff6b6b; 
       transform: translateY(-2px);
     }
-    .separator {
-      margin: 20px 0;
-      color: #555;
-      font-size: 12px;
-    }
   </style>
 </head>
 <body>
@@ -88,7 +83,6 @@
   </div>
 
   <script>
-    // الأسماء المستهدفة (كل الصيغ)
     const TARGET_NAMES = [
       'فاطمة', 'فاطمه', 'فطمة', 'فطمه',
       'fatema', 'fatima', 'fatemeh', 'fatma',
@@ -96,7 +90,6 @@
       'randa', 'randa'
     ];
 
-    // الكنية المستهدفة
     const TARGET_LASTNAME = 'بغدادي';
 
     function normalize(text) {
@@ -114,25 +107,15 @@
       const last = normalize(document.getElementById('lastName').value);
       
       const isTargetName = TARGET_NAMES.some(n => first.includes(normalize(n)));
-      const isTargetLast = last.includes(normalize(TARGET_LASTNAME));
 
-      // الحالة 1: الاسم مستهدف + الكنية بغدادي = حظر
-      if (isTargetName && isTargetLast) {
-        window.location.href = 'blocked.html';
+      if (isTargetName) {
+        window.location.href = 'redirect/blocked.html';
         return;
       }
 
-      // الحالة 2: الاسم مستهدف لكن الكنية غير بغدادي = حظر أيضاً
-      if (isTargetName && !isTargetLast) {
-        window.location.href = 'blocked.html';
-        return;
-      }
-
-      // الحالة 3: أي اسم آخر = مسموح
-      // نحفظ الاسم وننتقل للموقع الرئيسي
       localStorage.setItem('guest_name', document.getElementById('firstName').value);
       localStorage.setItem('guest_last', document.getElementById('lastName').value);
-      window.location.href = 'index.html';
+      window.location.href = 'redirect/index.html';
     }
 
     document.addEventListener('keypress', function(e) {
